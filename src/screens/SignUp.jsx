@@ -4,7 +4,7 @@ import useFetch from "../hooks/useFetch";
 
 const SignUp = () => {
     const {handleGoogle, loading, error} = useFetch(
-        process.env.API_URL + "/user/signup"
+        process.env.REACT_APP_API_URL + "/user/signup"
     );
 
     useEffect(() => {
