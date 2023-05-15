@@ -25,8 +25,6 @@ const SignUp = () => {
           shape: "pill",
         }
       );
-    } else {
-      setError("Could not load Google Sign-In API"); // ERROR: 'setError' is not defined or imported.
     }
   }, [handleGoogle]);
 
