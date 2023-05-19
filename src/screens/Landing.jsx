@@ -5,7 +5,7 @@ const Landing = () => {
   return (
     <>
       <header style={{ textAlign: "center" }}>
-        <h1>Welcome to my world</h1>
+        <h1>Welcome ADR AI Chat</h1>
       </header>
       <main style={{ display: "flex", justifyContent: "center", gap: "2rem" }}>
         <Link
