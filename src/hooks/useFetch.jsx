@@ -24,8 +24,9 @@ const useFetch = (url) => {
         if (data?.user) {
           localStorage.setItem("user", JSON.stringify(data?.user));
           window.location.reload();
+          return;
         }
-
+        alert(data?.message || 'Something went wrong.');
         throw new Error(data?.message || data);
       })
       .catch((error) => {
