@@ -22,7 +22,10 @@ const Home = ({user}) => {
         fetch(`${process.env.REACT_APP_API_URL}/openai/prompt`,
             {
                 method: 'POST',
-                headers: {"Content-Type": "application/json",},
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + user.token,
+                },
                 body: JSON.stringify({email: user.email, promptID: currentPromptId, prompt: prompt})
             }
         )
@@ -104,7 +107,10 @@ const Home = ({user}) => {
         setCurrentPromptId(promptId);
         fetch(`${process.env.REACT_APP_API_URL}/openai/prompt/${promptId}`,
             {
-                headers: {"Content-Type": "application/json",},
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + user.token,
+                },
             }
         )
             .then(response => response.json())
@@ -116,7 +122,10 @@ const Home = ({user}) => {
     const updatePromptHistory = () => {
         fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
             {
-                headers: {"Content-Type": "application/json",},
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + user.token,
+                },
             }
         )
             .then(response => response.json())
@@ -135,7 +144,8 @@ const Home = ({user}) => {
                 <nav className="navbar navbar-expand-md navbar-dark fixed-bottom bg-dark">
                     <div className="container-fluid">
                         <a className="navbar-brand" href="/">
-                            <img src="/logo-1.png" alt="logo" width="51" height="25" className="d-inline-block align-text-top"/>
+                            <img src="/logo-1.png" alt="logo" width="51" height="25"
+                                 className="d-inline-block align-text-top"/>
                         </a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarCollapse" aria-controls="navbarCollapse"
@@ -180,7 +190,7 @@ const Home = ({user}) => {
                             </ul>
                         </div>
                     </div>
-                    <div className={"col mb-5 pb-5"}>
+                    <div id="promptExchange" className={"col mb-5"}>
                         <main className="d-flex flex-shrink-0 flex-column">
                             <div className="col">
                                 {responseItems}
