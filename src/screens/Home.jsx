@@ -1,3 +1,5 @@
+import React from "react";
+
 // Pass User
 const Home = ({user}) => {
     const [data, setData] = React.useState([]);
