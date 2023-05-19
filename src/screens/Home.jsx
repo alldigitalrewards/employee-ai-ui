@@ -1,9 +1,10 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 // Pass User
 const Home = ({user}) => {
     const [data, setData] = React.useState([]);
     const [prompt, setPrompt] = React.useState('');
+    const [promptHistory, setPromptHistory] = React.useState([]);
     const [responseItems, setResponseItems] = React.useState([]);
     const [currentPromptId, setCurrentPromptId] = React.useState('');
 
@@ -22,7 +23,7 @@ const Home = ({user}) => {
             {
                 method: 'POST',
                 headers: {"Content-Type": "application/json",},
-                body: JSON.stringify({promptID: currentPromptId, prompt: prompt})
+                body: JSON.stringify({email: user.email, promptID: currentPromptId, prompt: prompt})
             }
         )
             .then(response => response.json())
@@ -60,6 +61,43 @@ const Home = ({user}) => {
             </>)
         );
     }
+
+    const formatPromptHistory = (promptHistoryData) => {
+        setPromptHistory(promptHistoryData.map(item =>
+                <>
+                    <li className="nav-item">
+                        <a href="/" className="nav-link align-middle px-0">
+                            <span className="ms-1 d-none d-sm-inline">{item.title}</span>
+                        </a>
+                    </li>
+                </>
+            )
+        )
+    }
+
+    const newPrompt = () => {
+        updatePromptHistory();
+        setCurrentPromptId('');
+        setPrompt('');
+        setResponseItems([]);
+        document.getElementById("prompt").value = "";
+    }
+
+    const updatePromptHistory = () => {
+        fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
+            {
+                headers: {"Content-Type": "application/json",},
+            }
+        )
+            .then(response => response.json())
+            .then(responseData => {
+                formatPromptHistory(responseData);
+            });
+    }
+
+    useEffect(() => {
+        updatePromptHistory();
+    }, []);
 
     return (
         <>
@@ -102,22 +140,15 @@ const Home = ({user}) => {
                             <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
                                 id="menu">
                                 <li className="nav-item">
-                                    <a href="/" className="nav-link align-middle px-0">
-                                        <span className="ms-1 d-none d-sm-inline">HISTORY</span>
-                                    </a>
+                                    <span onClick={newPrompt} className="nav-link align-middle px-0">
+                                        <span className="ms-1 d-none d-sm-inline">+New Prompt</span>
+                                    </span>
                                 </li>
-                                <li>
-                                    <a href="/" className="nav-link px-0 align-middle">
-                                        <span className="ms-1 d-none d-sm-inline">HISTORY</span></a>
-                                </li>
-                                <li>
-                                    <a href="/" className="nav-link px-0 align-middle">
-                                        <span className="ms-1 d-none d-sm-inline">HISTORY</span> </a>
-                                </li>
+                                {promptHistory}
                             </ul>
                         </div>
                     </div>
-                    <div className={"col"}>
+                    <div className={"col mb-5"}>
                         <main className="d-flex flex-shrink-0 flex-column">
                             <div className="col">
                                 {responseItems}
