@@ -1,6 +1,14 @@
 #promptExchange {
-    overflow:scroll;
+    overflow: scroll;
     height: 90vh;
     display: flex;
     flex-direction: column-reverse;
+}
+
+#loader {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    width: 200px;
+    z-index: 999;
 }

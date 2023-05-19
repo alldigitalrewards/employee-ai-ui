@@ -7,6 +7,7 @@ const Home = ({user}) => {
     const [promptHistory, setPromptHistory] = React.useState([]);
     const [responseItems, setResponseItems] = React.useState([]);
     const [currentPromptId, setCurrentPromptId] = React.useState('');
+    const [displayLoader, setDisplayLoader] = React.useState(false);
 
     const promptItem = (prompt) => {
         setPrompt(prompt);
@@ -18,6 +19,7 @@ const Home = ({user}) => {
     };
 
     const sendPrompt = () => {
+        setDisplayLoader(true);
         document.getElementById("prompt").value = "";
         fetch(`${process.env.REACT_APP_API_URL}/openai/prompt`,
             {
@@ -79,6 +81,7 @@ const Home = ({user}) => {
                 </div>
             </>)
         );
+        setDisplayLoader(false);
     }
 
     const formatPromptHistory = (promptHistoryData) => {
@@ -140,6 +143,12 @@ const Home = ({user}) => {
 
     return (
         <>
+            {displayLoader &&
+            <div id={"loader"}>
+                <img src={"/loader.gif"} alt={"loader"}/>
+                Loading response...
+            </div>
+            }
             <header>
                 <nav className="navbar navbar-expand-md navbar-dark fixed-bottom bg-dark">
                     <div className="container-fluid">
@@ -163,6 +172,7 @@ const Home = ({user}) => {
                             <input className="form-control me-2" type="search" id="prompt"
                                    onChange={(e) => promptItem(e.target.value)}
                                    autoComplete={"off"}
+                                   disabled={displayLoader}
                                    onKeyDown={onKeyDownHandler}
                                    placeholder="Prompt" aria-label="Search"/>
                         </div>
