@@ -183,7 +183,7 @@ const Home = ({user}) => {
                                    placeholder="Prompt" aria-label="Search"/>
                             <label htmlFor="temperature" className="form-label temperature-label">Temp</label>
                             <input type="range" className="form-range"
-                                   min="0.1" max="0.9" step="0.1" id="temperature"
+                                   min="0.01" max="0.99" step="0.01" id="temperature"
                                    onChange={(e) => setTemperature(Number(e.target.value))}
                             />
                         </div>
