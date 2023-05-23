@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 
 const SignUp = () => {
-  const { handleGoogle, loading, error } = useFetch(
+  const { handleGoogle } = useFetch(
     `${process.env.REACT_APP_API_URL}/user/signup`
   );
 
