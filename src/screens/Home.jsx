@@ -4,6 +4,7 @@ import React, {useEffect} from "react";
 const Home = ({user}) => {
     const [data, setData] = React.useState([]);
     const [prompt, setPrompt] = React.useState('');
+    const [temperature, setTemperature] = React.useState(0.9);
     const [promptHistory, setPromptHistory] = React.useState([]);
     const [responseItems, setResponseItems] = React.useState([]);
     const [currentPromptId, setCurrentPromptId] = React.useState('');
@@ -28,7 +29,12 @@ const Home = ({user}) => {
                     "Content-Type": "application/json",
                     "Authorization": "Bearer " + user.token,
                 },
-                body: JSON.stringify({email: user.email, promptID: currentPromptId, prompt: prompt})
+                body: JSON.stringify({
+                    email: user.email,
+                    promptID: currentPromptId,
+                    prompt: prompt,
+                    temperature: temperature
+                })
             }
         )
             .then(response => response.json())
@@ -175,6 +181,11 @@ const Home = ({user}) => {
                                    disabled={displayLoader}
                                    onKeyDown={onKeyDownHandler}
                                    placeholder="Prompt" aria-label="Search"/>
+                            <label htmlFor="temperature" className="form-label temperature-label">Temp</label>
+                            <input type="range" className="form-range"
+                                   min="0.01" max="0.99" step="0.01" id="temperature"
+                                   onChange={(e) => setTemperature(Number(e.target.value))}
+                            />
                         </div>
                     </div>
                 </nav>

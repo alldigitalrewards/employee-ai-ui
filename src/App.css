@@ -12,3 +12,11 @@
     width: 200px;
     z-index: 999;
 }
+
+.temperature-label {
+    color: #fff;
+}
+
+#temperature {
+    max-width: 100px;
+}
