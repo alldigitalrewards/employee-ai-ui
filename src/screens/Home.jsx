@@ -1,16 +1,17 @@
-import React, {useEffect} from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { FiSend } from "react-icons/fi";
 
 // Pass User
-const Home = ({user}) => {
-    const [data, setData] = React.useState([]);
-    const [prompt, setPrompt] = React.useState('');
-    const [temperature, setTemperature] = React.useState(0.9);
-    const [promptHistory, setPromptHistory] = React.useState([]);
-    const [responseItems, setResponseItems] = React.useState([]);
-    const [currentPromptId, setCurrentPromptId] = React.useState('');
-    const [displayLoader, setDisplayLoader] = React.useState(false);
+const Home = ({ user }) => {
+    const [data, setData] = useState([]);
+    const [prompt, setPrompt] = useState("");
+    const [temperature, setTemperature] = useState(0.9);
+    const [promptHistory, setPromptHistory] = useState([]);
+    const [responseItems, setResponseItems] = useState([]);
+    const [currentPromptId, setCurrentPromptId] = useState("");
+    const [displayLoader, setDisplayLoader] = useState(false);
 
-    const promptItem = (prompt) => {
+    function promptItem(prompt) {
         setPrompt(prompt);
     }
 
@@ -56,11 +57,8 @@ const Home = ({user}) => {
         }
     };
 
-    useEffect(() => {
-        formatPromptConversation(data);
-    }, [data]);
 
-    const formatPromptConversation = (promptData) => {
+    const formatPromptConversation = useCallback((promptData) => {
         setResponseItems(promptData.map(item =>
             <>
                 <div className="row py-3" style={{whiteSpace: "pre-wrap"}}>
@@ -88,7 +86,12 @@ const Home = ({user}) => {
             </>)
         );
         setDisplayLoader(false);
-    }
+    
+    })
+
+    useEffect(() => {
+        formatPromptConversation(data);
+    }, [data, formatPromptConversation]); // Add formatPromptConversation as a dependency
 
     const formatPromptHistory = (promptHistoryData) => {
         setPromptHistory(promptHistoryData.map(item =>
@@ -101,7 +104,11 @@ const Home = ({user}) => {
                 </>
             )
         )
-    }
+    };
+
+    useEffect(() => {
+        formatPromptHistory(promptHistory);
+    }, [promptHistory]);
 
     const newPrompt = () => {
         updatePromptHistory();
@@ -109,12 +116,12 @@ const Home = ({user}) => {
         setPrompt('');
         setData([]);
         document.getElementById("prompt").value = "";
-    }
+    };
 
     const loadExistingPrompt = (promptId) => {
         newPrompt();
         setCurrentPromptId(promptId);
-        fetch(`${process.env.REACT_APP_API_URL}/openai/prompt/${promptId}`,
+        fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -126,9 +133,10 @@ const Home = ({user}) => {
             .then(responseData => {
                 setData(responseData.history);
             });
-    }
+    };
 
-    const updatePromptHistory = () => {
+    
+    const updatePromptHistory = useCallback(() => {
         fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
             {
                 headers: {
@@ -141,11 +149,11 @@ const Home = ({user}) => {
             .then(responseData => {
                 formatPromptHistory(responseData);
             });
-    }
+    }, [user.token]);
 
     useEffect(() => {
         updatePromptHistory();
-    }, []);
+    }, [updatePromptHistory]);  // Add updatePromptHistory as a dependency
 
     return (
         <>
@@ -175,12 +183,19 @@ const Home = ({user}) => {
                                     </span>
                                 </li>
                             </ul>
-                            <input className="form-control me-2" type="search" id="prompt"
-                                   onChange={(e) => promptItem(e.target.value)}
-                                   autoComplete={"off"}
-                                   disabled={displayLoader}
-                                   onKeyDown={onKeyDownHandler}
-                                   placeholder="Prompt" aria-label="Search"/>
+                            <div className="input-group">
+                                <textarea className="form-control" id="prompt" rows="1"
+                                          onChange={(e) => promptItem(e.target.value)}
+                                          autoComplete={"off"}
+                                          disabled={displayLoader}
+                                          onKeyDown={onKeyDownHandler}
+                                          placeholder="Prompt" aria-label="Search"
+                                          style={{resize: 'none', overflow: 'hidden'}}
+                                ></textarea>
+                                <button className="btn btn-outline-secondary" type="button" onClick={sendPrompt}>
+                                    <FiSend />
+                                </button>
+                            </div>
                             <label htmlFor="temperature" className="form-label temperature-label">Temp</label>
                             <input type="range" className="form-range"
                                    min="0.01" max="0.99" step="0.01" id="temperature"
@@ -199,15 +214,24 @@ const Home = ({user}) => {
                                className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                                 <span className="fs-4">History</span>
                             </a>
-                            <hr/>
+                            <hr style={{borderTop: '4px solid white', width: '100%', marginBottom: '10px'}}/>
+                            <input className="form-control mb-3" type="search" placeholder="Search history" aria-label="Search"/>
                             <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
                                 id="menu">
                                 <li className="nav-item">
-                                    <span onClick={newPrompt} className="nav-link align-middle px-0">
+                                    <span onClick={newPrompt} className="nav-link align-middle px-0" style={{
+                                        borderRadius: '15px',
+                                        border: '2px solid #f59e0b',
+                                        backgroundColor: 'transparent',
+                                        color: '#ffffff',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        paddingRight: '10px'
+                                    }}>
                                         <span className="ms-1 d-none d-sm-inline">+New Prompt</span>
                                     </span>
                                 </li>
-                                {promptHistory}
+                                {promptHistory.filter(item => item !== 'none')}
                             </ul>
                         </div>
                     </div>
