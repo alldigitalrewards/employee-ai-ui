@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FiSend } from "react-icons/fi";
+import {FiPlus, FiSend} from "react-icons/fi";
 
 // Pass User
 const Home = ({ user }) => {
     const [data, setData] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [temperature, setTemperature] = useState(0.9);
-    const [promptHistory, setPromptHistory] = useState([]);
     const [responseItems, setResponseItems] = useState([]);
     const [currentPromptId, setCurrentPromptId] = useState("");
     const [displayLoader, setDisplayLoader] = useState(false);
+    const [searchInput, setSearchInput] = useState("");
+    const [promptHistoryData, setPromptHistoryData] = useState([]);
+    const [filteredPromptHistory, setFilteredPromptHistory] = useState([]);
 
 
     useEffect(() => {
@@ -96,19 +98,6 @@ const Home = ({ user }) => {
         setDisplayLoader(false);
     }
 
-    const formatPromptHistory = (promptHistoryData) => {
-        setPromptHistory(promptHistoryData.map(item =>
-                <>
-                    <li className="nav-item">
-                        <span className="nav-link align-middle px-0" onClick={() => loadExistingPrompt(item.promptId)}>
-                            <span className="ms-1 d-none d-sm-inline">{item.title}</span>
-                        </span>
-                    </li>
-                </>
-            )
-        )
-    };
-
     const newPrompt = () => {
         updatePromptHistory();
         setCurrentPromptId('');
@@ -134,7 +123,6 @@ const Home = ({ user }) => {
             });
     };
 
-
     const updatePromptHistory = () => {
         fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
             {
@@ -146,9 +134,22 @@ const Home = ({ user }) => {
         )
             .then(response => response.json())
             .then(responseData => {
-                formatPromptHistory(responseData);
+                setPromptHistoryData(responseData);
             });
     };
+
+    const searchPromptHistory = (search) => {
+        if (search !== '') {
+            setSearchInput(search);
+            const filteredData = promptHistoryData.filter((item) => {
+                return Object.values(item).join('').toLowerCase().includes(search.toLowerCase())
+            })
+            setFilteredPromptHistory(filteredData)
+        }
+        else{
+            setFilteredPromptHistory(promptHistoryData)
+        }
+    }
 
     return (
         <>
@@ -205,28 +206,34 @@ const Home = ({ user }) => {
                     <div className={"col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark"}>
                         <div
                             className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
-                            <a href="/"
-                               className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                                <span className="fs-4">History</span>
-                            </a>
-                            <hr style={{borderTop: '4px solid white', width: '100%', marginBottom: '10px'}}/>
-                            <input className="form-control mb-3" type="search" placeholder="Search history" aria-label="Search"/>
+                            <div className={"input-group flex-nowrap"}>
+                                <input onChange={(e) => searchPromptHistory(e.target.value)}
+                                    className="form-control" type="search" placeholder="Search history" aria-label="Search"/>
+                                <span className="input-group-text" id="addon-wrapping" onClick={newPrompt}><FiPlus /></span>
+                            </div>
                             <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
                                 id="menu">
-                                <li className="nav-item">
-                                    <span onClick={newPrompt} className="nav-link align-middle px-0" style={{
-                                        borderRadius: '15px',
-                                        border: '2px solid #f59e0b',
-                                        backgroundColor: 'transparent',
-                                        color: '#ffffff',
-                                        fontWeight: 'bold',
-                                        cursor: 'pointer',
-                                        paddingRight: '10px'
-                                    }}>
-                                        <span className="ms-1 d-none d-sm-inline">+New Prompt</span>
-                                    </span>
-                                </li>
-                                {promptHistory}
+                                {searchInput.length > 1 ? (
+                                    filteredPromptHistory.map((item) => {
+                                        return (
+                                            <>
+                                                <li className="nav-item">
+                        <span className="nav-link align-middle px-0" onClick={() => loadExistingPrompt(item.promptId)}>
+                            <span className="ms-1 d-none d-sm-inline">{item.title}</span>
+                        </span>
+                                                </li>
+                                            </>
+                                        )
+                                    })
+                                ) : promptHistoryData.map(item =>
+                                        <>
+                                            <li className="nav-item">
+                        <span className="nav-link align-middle px-0" onClick={() => loadExistingPrompt(item.promptId)}>
+                            <span className="ms-1 d-none d-sm-inline">{item.title}</span>
+                        </span>
+                                            </li>
+                                        </>
+                                )}
                             </ul>
                         </div>
                     </div>
