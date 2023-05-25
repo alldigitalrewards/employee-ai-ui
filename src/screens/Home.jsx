@@ -86,12 +86,8 @@ const Home = ({ user }) => {
             </>)
         );
         setDisplayLoader(false);
-    
-    })
 
-    useEffect(() => {
-        formatPromptConversation(data);
-    }, [data, formatPromptConversation]); // Add formatPromptConversation as a dependency
+    })
 
     const formatPromptHistory = (promptHistoryData) => {
         setPromptHistory(promptHistoryData.map(item =>
@@ -105,10 +101,6 @@ const Home = ({ user }) => {
             )
         )
     };
-
-    useEffect(() => {
-        formatPromptHistory(promptHistory);
-    }, [promptHistory]);
 
     const newPrompt = () => {
         updatePromptHistory();
@@ -135,8 +127,9 @@ const Home = ({ user }) => {
             });
     };
 
-    
-    const updatePromptHistory = useCallback(() => {
+
+    const updatePromptHistory = () => {
+        console.log('updatePromptHistory');
         fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
             {
                 headers: {
@@ -149,11 +142,11 @@ const Home = ({ user }) => {
             .then(responseData => {
                 formatPromptHistory(responseData);
             });
-    }, [user.token]);
+    };
 
     useEffect(() => {
         updatePromptHistory();
-    }, [updatePromptHistory]);  // Add updatePromptHistory as a dependency
+    }, []);
 
     return (
         <>
@@ -231,7 +224,7 @@ const Home = ({ user }) => {
                                         <span className="ms-1 d-none d-sm-inline">+New Prompt</span>
                                     </span>
                                 </li>
-                                {promptHistory.filter(item => item !== 'none')}
+                                {promptHistory}
                             </ul>
                         </div>
                     </div>
