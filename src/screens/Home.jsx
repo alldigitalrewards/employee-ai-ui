@@ -11,6 +11,15 @@ const Home = ({ user }) => {
     const [currentPromptId, setCurrentPromptId] = useState("");
     const [displayLoader, setDisplayLoader] = useState(false);
 
+
+    useEffect(() => {
+        updatePromptHistory();
+    }, []);
+
+    useEffect(() => {
+        formatPromptConversation(data);
+    },[data])
+
     function promptItem(prompt) {
         setPrompt(prompt);
     }
@@ -57,8 +66,7 @@ const Home = ({ user }) => {
         }
     };
 
-
-    const formatPromptConversation = useCallback((promptData) => {
+    const formatPromptConversation =(promptData) => {
         setResponseItems(promptData.map(item =>
             <>
                 <div className="row py-3" style={{whiteSpace: "pre-wrap"}}>
@@ -86,8 +94,7 @@ const Home = ({ user }) => {
             </>)
         );
         setDisplayLoader(false);
-
-    })
+    }
 
     const formatPromptHistory = (promptHistoryData) => {
         setPromptHistory(promptHistoryData.map(item =>
@@ -113,7 +120,7 @@ const Home = ({ user }) => {
     const loadExistingPrompt = (promptId) => {
         newPrompt();
         setCurrentPromptId(promptId);
-        fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
+        fetch(`${process.env.REACT_APP_API_URL}/openai/prompt/${promptId}`,
             {
                 headers: {
                     "Content-Type": "application/json",
@@ -129,7 +136,6 @@ const Home = ({ user }) => {
 
 
     const updatePromptHistory = () => {
-        console.log('updatePromptHistory');
         fetch(`${process.env.REACT_APP_API_URL}/openai/history`,
             {
                 headers: {
@@ -143,10 +149,6 @@ const Home = ({ user }) => {
                 formatPromptHistory(responseData);
             });
     };
-
-    useEffect(() => {
-        updatePromptHistory();
-    }, []);
 
     return (
         <>
