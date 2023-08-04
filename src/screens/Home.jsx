@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {FiPlus, FiSend} from "react-icons/fi";
 
 // Pass User
-const Home = ({ user }) => {
+const Home = ({user}) => {
     const [data, setData] = useState([]);
     const [prompt, setPrompt] = useState("");
     const [temperature, setTemperature] = useState(0.9);
@@ -20,7 +20,7 @@ const Home = ({ user }) => {
 
     useEffect(() => {
         formatPromptConversation(data);
-    },[data])
+    }, [data])
 
     function promptItem(prompt) {
         setPrompt(prompt);
@@ -68,7 +68,7 @@ const Home = ({ user }) => {
         }
     };
 
-    const formatPromptConversation =(promptData) => {
+    const formatPromptConversation = (promptData) => {
         setResponseItems(promptData.map(item =>
             <>
                 <div className="row py-3" style={{whiteSpace: "pre-wrap"}}>
@@ -145,8 +145,7 @@ const Home = ({ user }) => {
                 return Object.values(item).join('').toLowerCase().includes(search.toLowerCase())
             })
             setFilteredPromptHistory(filteredData)
-        }
-        else{
+        } else {
             setFilteredPromptHistory(promptHistoryData)
         }
     }
@@ -154,10 +153,10 @@ const Home = ({ user }) => {
     return (
         <>
             {displayLoader &&
-            <div id={"loader"}>
-                <img src={"/loader.gif"} alt={"loader"}/>
-                Loading response...
-            </div>
+                <div id={"loader"}>
+                    <img src={"/loader.gif"} alt={"loader"}/>
+                    Loading response...
+                </div>
             }
             <header>
                 <nav className="navbar navbar-expand-md navbar-dark fixed-bottom bg-dark">
@@ -179,7 +178,7 @@ const Home = ({ user }) => {
                                     </span>
                                 </li>
                             </ul>
-                            <div className="input-group">
+                            <div className="input-group searchbar">
                                 <textarea className="form-control" id="prompt" rows="1"
                                           onChange={(e) => promptItem(e.target.value)}
                                           autoComplete={"off"}
@@ -189,14 +188,17 @@ const Home = ({ user }) => {
                                           style={{resize: 'none', overflow: 'hidden'}}
                                 ></textarea>
                                 <button className="btn btn-outline-secondary" type="button" onClick={sendPrompt}>
-                                    <FiSend />
+                                    <FiSend/>
                                 </button>
                             </div>
-                            <label htmlFor="temperature" className="form-label temperature-label">Temp</label>
+
+                            <label htmlFor="temperature" className="form-label temperature-label">Precise</label>
                             <input type="range" className="form-range"
                                    min="0.01" max="0.99" step="0.01" id="temperature"
                                    onChange={(e) => setTemperature(Number(e.target.value))}
                             />
+                            <label htmlFor="temperature" className="form-label temperature-label">Creative</label>
+
                         </div>
                     </div>
                 </nav>
@@ -208,8 +210,10 @@ const Home = ({ user }) => {
                             className="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
                             <div className={"input-group flex-nowrap"}>
                                 <input onChange={(e) => searchPromptHistory(e.target.value)}
-                                    className="form-control" type="search" placeholder="Search history" aria-label="Search"/>
-                                <span className="input-group-text" id="addon-wrapping" onClick={newPrompt}><FiPlus /></span>
+                                       className="form-control" type="search" placeholder="Search history"
+                                       aria-label="Search"/>
+                                <span className="input-group-text" id="addon-wrapping"
+                                      onClick={newPrompt}><FiPlus/></span>
                             </div>
                             <ul className="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start"
                                 id="menu">
