@@ -219,7 +219,7 @@ const Home = ({ user }) => {
                                             <>
                                                 <li className="nav-item">
                         <span className="nav-link align-middle px-0" onClick={() => loadExistingPrompt(item.promptId)}>
-                            <span className="ms-1 d-none d-sm-inline">{item.title}</span>
+                            <span className="ms-1 d-none d-sm-inline history-item">{item.title}</span>
                         </span>
                                                 </li>
                                             </>
@@ -229,7 +229,7 @@ const Home = ({ user }) => {
                                         <>
                                             <li className="nav-item">
                         <span className="nav-link align-middle px-0" onClick={() => loadExistingPrompt(item.promptId)}>
-                            <span className="ms-1 d-none d-sm-inline">{item.title}</span>
+                            <span className="ms-1 d-none d-sm-inline history-item">{item.title}</span>
                         </span>
                                             </li>
                                         </>
