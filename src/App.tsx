@@ -28,7 +28,7 @@ function App() {
 
         if (theUser && !theUser.includes("undefined")) {
             setUser(JSON.parse(theUser));
-            setTimeout(() => {
+            setInterval(() => {
                 checkToken();
             }, 10000);
         }
