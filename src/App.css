@@ -20,3 +20,11 @@
 #temperature {
     max-width: 100px;
 }
+
+.history-item {
+    color: #fff;
+}
+
+.searchbar {
+    padding-right: 10px;
+}

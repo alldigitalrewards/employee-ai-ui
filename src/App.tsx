@@ -3,17 +3,34 @@ import {useState} from "react";
 import './App.css';
 import {BrowserRouter, Routes, Route, Navigate} from "react-router-dom";
 import {Home, Landing, Login, Signup} from "./screens";
+import jwtDecode, { JwtPayload } from "jwt-decode";
 
 function App() {
     const [user, setUser] = useState({
         email: false
     });
 
+    const checkToken = () => {
+        const userJson = localStorage.getItem("user");
+
+        if (userJson && !userJson.includes("undefined")) {
+            const user = JSON.parse(userJson);
+            const decoded = jwtDecode<JwtPayload>(user.token);
+            if(decoded.exp !== undefined && decoded.exp < Date.now() / 1000) {
+                localStorage.removeItem("user");
+                window.location.reload();
+            }
+        }
+    }
+
     useEffect(() => {
         const theUser = localStorage.getItem("user");
 
         if (theUser && !theUser.includes("undefined")) {
             setUser(JSON.parse(theUser));
+            setInterval(() => {
+                checkToken();
+            }, 10000);
         }
     }, []);
     return (
